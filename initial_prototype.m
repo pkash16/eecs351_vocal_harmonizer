@@ -25,7 +25,7 @@ num_windows = floor(N / window_size);
 final_time = [];
 
 
-for window = 0:3%num_windows-1
+for window = 0:num_windows-1
    %endless loop
    
    %truncate signal to window size
@@ -53,7 +53,7 @@ for window = 0:3%num_windows-1
    %find peaks, shift
    [peak_val, peak_loc] = findpeaks(abs(half_freq), 'Threshold', findpeaks_threshold, 'SortStr', 'descend');
    
-   num_peaks_considered = min(numharms, size(peak_loc))
+   num_peaks_considered = min(numharms, size(peak_loc));
    
    
    peaks_considered = peak_loc(1:num_peaks_considered);
@@ -64,9 +64,10 @@ for window = 0:3%num_windows-1
       mask_window(peaks_considered(peak)-(mask_width/2):peaks_considered(peak)+(mask_width/2)) = 1; 
    end
    
+   cleaned_up = half_freq .* mask_window;
+   
    %{
    figure();
-   cleaned_up = half_freq .* mask_window;
    plot(freq_axis, abs(cleaned_up))
    title("cleaned up " + num2str(window));
    %}
@@ -83,7 +84,7 @@ for window = 0:3%num_windows-1
 
    
    %flip it over, ifft
-   ultimate_signal = [final_signal; flipud(final_signal)]
+   ultimate_signal = [final_signal; flipud(final_signal)];
    
    %{
    figure();
