@@ -19,7 +19,6 @@ mask_width = 5;
 harmonic_third = 1.25; %Corresponds to a third
 
 
-
 num_windows = floor(N / window_size);
 
 final_time = [];
@@ -29,7 +28,7 @@ for window = 0:num_windows-1
    %endless loop
    
    %truncate signal to window size
-   windowed_signal = y((window*window_size)+1:(window+1)*window_size) .* hamming(window_size);
+   windowed_signal = y((window*window_size)+1:(window+1)*window_size);% .* hamming(window_size);
    
    %{
    figure()
@@ -47,8 +46,8 @@ for window = 0:num_windows-1
     %{
     figure()
     plot(freq_axis, abs(half_freq))
-    title(num2str(window))
-    %}
+    title("Positive side of FFT of window in Hz" + num2str(window))
+   %} 
     
    %find peaks, shift
    [peak_val, peak_loc] = findpeaks(abs(half_freq), 'Threshold', findpeaks_threshold, 'SortStr', 'descend');
@@ -61,7 +60,7 @@ for window = 0:num_windows-1
    mask_window = zeros(window_size/2, 1);
    
    for peak = 1:num_peaks_considered
-      mask_window(peaks_considered(peak)-(mask_width/2):peaks_considered(peak)+(mask_width/2)) = 1; 
+      mask_window(max(floor(peaks_considered(peak)-(mask_width/2)), 1):min(floor(peaks_considered(peak)+(mask_width/2)),floor(window_size/2))) = 1; 
    end
    
    cleaned_up = half_freq .* mask_window;
@@ -69,7 +68,7 @@ for window = 0:num_windows-1
    %{
    figure();
    plot(freq_axis, abs(cleaned_up))
-   title("cleaned up " + num2str(window));
+   title("Peaks and 'regions of influence' of FFT of window " + num2str(window));
    %}
    
    final_signal = zeros(window_size/2, 1);
@@ -88,16 +87,19 @@ for window = 0:num_windows-1
    
    %{
    figure();
-   plot(abs(flipud(final_signal)));
+   plot(abs(flipud(fi
+nal_signal)));
    title("final signal (flipped) " + num2str(window))
+   
    
    figure();
    plot(abs(final_signal));
-   title("final signal (unflipped) " + num2str(window))
+   title("Combined FFT of windowed signal with shifted peaks " + num2str(window))
+   
    
    figure();
    plot(abs(ultimate_signal));
-   title("ultimate signal " + num2str(window))
+   title("Combined FFT of windowed signal with peaks " + num2str(window))
    %}
 
    %ifft
@@ -105,10 +107,11 @@ for window = 0:num_windows-1
    time_domain = ifft(ultimate_signal, 'symmetric');
    
    
+   %{
    figure();
    plot(time_domain);
    title("time domain " + num2str(window))
-   
+   %}
    
    final_time = [final_time; time_domain];
    
@@ -117,4 +120,9 @@ end
 
 %olay output array
 plot(final_time);
-sound(final_time, fs)
+title("Final Time Domain Signal")
+xlabel("Time")
+%sound(final_time, fs)
+
+audiowrite("final.wav",final_time, fs);
+
