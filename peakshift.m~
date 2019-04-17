@@ -13,8 +13,6 @@ function [ultimate_signal] = peakshift(windowed_signal, window_size, fs)
     %Freq note shifts
     harmonic_third = 1.25; %Corresponds to a third
     harmonic_fifth = 1.5;
-    harmonic_second = 9.0/8.0;
-    harmonic_seventh = 15.0/8.0;
 
    
    %fft of that window
@@ -55,9 +53,7 @@ function [ultimate_signal] = peakshift(windowed_signal, window_size, fs)
    
    
    shifted_signal1 = shift_signal(cleaned_up, harmonic_fifth, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
-   shifted_signal2 = shift_signal(cleaned_up, harmonic_third, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
-   shifted_signal3 = shift_signal(cleaned_up, harmonic_second, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
-   shifted_signal4 = shift_signal(cleaned_up, harmonic_seventh, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
+   shifted_signal2 = shift_signal(cleaned_up, harmonic_fifth, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
    
    %{
    final_signal = zeros(window_size/2, 1);
@@ -82,7 +78,7 @@ function [ultimate_signal] = peakshift(windowed_signal, window_size, fs)
    final_signal = final_signal + half_freq + shifted_signal2;
     %}
 
-   final_signal = half_freq + shifted_signal1 + shifted_signal2 + shifted_signal3 + shifted_signal4;
+   final_signal = half_freq + shifted_signal1;% + shifted_signal2;
    
    %flip it over, ifft
    ultimate_signal = [final_signal; flipud(final_signal)];

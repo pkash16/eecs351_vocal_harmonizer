@@ -1,10 +1,10 @@
 close all
 
-[y,fs] = audioread("input.aif");
+[y,fs] = audioread("basic.aif");
 
 
 t = 0:1/fs:4;
-sin_wave = (sin(2*pi*400*t))' * 0.2 + ((sin(2*pi*400*1.25*t))' * 0.2);
+sin_wave = (sin(2*pi*400*t))' * 0.2;% + ((sin(2*pi*400*1.25*t))' * 0.2);
 
 %noise = 0.001 * randn(1,length(sin_wave));
 
@@ -19,19 +19,21 @@ figure()
 plot(freq_axis, abs(fftshift(fft(y))))
 title("before processing")
 
-window_size = 2500;
-
+window_size = 10000;
 
 num_windows = floor(N / window_size);
 
 final_time = [y(1:window_size); zeros(length(y)-window_size, 1)];
-
+%FROM NO WINDOWING
+%final_time = [];
 for window = 1:num_windows-1
    %endless loop
    
    %truncate signal to window size
-   windowed_signal = y((window*window_size)+1:(window+1)*window_size) .* hann(window_size);
-   windowed_signal2 = y((window*window_size)+1-(window_size/2):(window+1)*window_size-(window_size/2)) .* hann(window_size);
+   windowed_signal = y((window*window_size)+1:(window+1)*window_size) .* hanning(window_size);
+   windowed_signal2 = y((window*window_size)+1-(window_size/2):(window+1)*window_size-(window_size/2)) .* hanning(window_size);
+   
+   
 
    ultimate1 = peakshift(windowed_signal, window_size, fs);
    ultimate2 = peakshift(windowed_signal2, window_size, fs);   
@@ -57,13 +59,15 @@ for window = 1:num_windows-1
    
    final_time = final_time + padded_overlap;
    
-   %final_time = [final_time; time_domain(1:window_size/2); overlap; time_domain2(window_size/2+1:window_size)];
+   %FROM no windowing
    %final_time = [final_time; time_domain];
    
    %append it to output array
 end
 
 %olay output array
+final_time = final_time/max(abs(final_time));
+
 plot(final_time);
 title("Final Time Domain Signal")
 xlabel("Time")
@@ -74,5 +78,4 @@ xlabel("Frequency");
 
 sound(final_time, fs)
 
-audiowrite("final.wav",final_time, fs);
-
+audiowrite("output_audio/window_correct.wav",final_time, fs);
