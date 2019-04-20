@@ -16,9 +16,9 @@ function [shifted_signal] = shift_signal(cleaned_up, ratio_shift, window_size, p
       left_span = min(scaled_left_span, signal_left_span);
       right_span = min(scaled_right_span, signal_right_span);
 
-      freq_shift = (scaled_index - signal_index) * fs/window_size;
+      freq_shift = (scaled_index - signal_index) * 2*pi/window_size;
 
-      shifted_signal(scaled_index-left_span:scaled_index+right_span) = cleaned_up(signal_index-left_span:signal_index+right_span) .* exp(j*(freq_shift)*window_size/2);
+      shifted_signal(scaled_index-left_span:scaled_index+right_span) = cleaned_up(signal_index-left_span:signal_index+right_span) .* exp(1j*(freq_shift)*window_size/2);
     end
 
 end

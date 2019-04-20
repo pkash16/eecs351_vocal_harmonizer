@@ -11,7 +11,9 @@ title("before processing")
 
 e = pvoc(y, 0.8);
 
-f = resample(e,4,5); % NB: 0.8 = 4/5 
+f = resample(e,4,5); % NB: 0.8 = 4/5
+f = pvoc(e, 1.5 * 5/4);
+f = resample(f, 3, 2);
 soundsc(y(1:length(f))+f,fs)
 
 

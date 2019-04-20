@@ -15,6 +15,10 @@ function [ultimate_signal] = peakshift(windowed_signal, window_size, fs)
     harmonic_fifth = 1.5;
     harmonic_second = 9.0/8.0;
     harmonic_seventh = 15.0/8.0;
+    
+    minor_third = 6.0/5.0;
+    minor_seventh = 16.0/9.0;
+    
 
    
    %fft of that window
@@ -58,6 +62,12 @@ function [ultimate_signal] = peakshift(windowed_signal, window_size, fs)
    shifted_signal2 = shift_signal(cleaned_up, harmonic_third, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
    shifted_signal3 = shift_signal(cleaned_up, harmonic_second, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
    shifted_signal4 = shift_signal(cleaned_up, harmonic_seventh, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
+   %{
+   figure();
+   plot(freq_axis, abs(cleaned_up));
+   plot(freq_axis, abs(shifted_signal2));
+   title("Peaks of FFT window shifted and added by a harmonic fifth");
+   %}
    
    %{
    final_signal = zeros(window_size/2, 1);
@@ -91,13 +101,15 @@ function [ultimate_signal] = peakshift(windowed_signal, window_size, fs)
    figure();
    plot(abs(flipud(final_signal)));
    title("final signal (flipped) " + num2str(window))
+   %}
    
-   
+   %{
    figure();
    plot(abs(final_signal));
    title("Combined FFT of windowed signal with shifted peaks " + num2str(window))
+   %}
    
-   
+   %{
    figure();
    plot(abs(ultimate_signal));
    title("Combined FFT of windowed signal with peaks " + num2str(window))
