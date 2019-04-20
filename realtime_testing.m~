@@ -36,21 +36,14 @@ disp('Begin Signal Input...')
 prevSignal = []
 prevProcessedSignal = []
 
-counter = 0;
-
 tic
 while toc<100
-    if counter > 1
-        mySignal = deviceReader();
-        myProcessedSignal = realtime_prototype([prevSignal(length(prevSignal)/2 + 1:end); mySignal], WINDOW_SIZE, SAMPLE_RATE);
-
-        metaOutput = [prevProcessedSignal(WINDOW_SIZE+1:end); zeros(WINDOW_SIZE, 1)] + myProcessedSignal;
-
-        deviceWriter(metaOutput(1:WINDOW_SIZE));
-    end
+    mySignal = deviceReader();
+    myProcessedSignal = realtime_prototype([prevSignal(length(prevSignal)/2:end); mySignal], WINDOW_SIZE, SAMPLE_RATE);
+    
+    deviceWriter([prevProcessedSignal(WINDOW_SIZE+1:end); zeros(WINDOW_SIZE)] + myProcessedSignal);
     prevSignal = mySignal;
     prevProcessedSignal = myProcessedSignal;
-    counter = counter + 1;
 end
 disp('End Signal Input')
 

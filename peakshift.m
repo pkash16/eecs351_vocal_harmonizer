@@ -60,8 +60,8 @@ function [ultimate_signal] = peakshift(windowed_signal, window_size, fs)
    
    shifted_signal1 = shift_signal(cleaned_up, harmonic_fifth, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
    shifted_signal2 = shift_signal(cleaned_up, harmonic_third, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
-   shifted_signal3 = shift_signal(cleaned_up, harmonic_second, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
-   shifted_signal4 = shift_signal(cleaned_up, harmonic_seventh, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
+   %shifted_signal3 = shift_signal(cleaned_up, harmonic_second, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
+   %shifted_signal4 = shift_signal(cleaned_up, harmonic_seventh, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
    %{
    figure();
    plot(freq_axis, abs(cleaned_up));
@@ -92,7 +92,7 @@ function [ultimate_signal] = peakshift(windowed_signal, window_size, fs)
    final_signal = final_signal + half_freq + shifted_signal2;
     %}
 
-   final_signal = half_freq + shifted_signal1 + shifted_signal2 + shifted_signal3 + shifted_signal4;
+   final_signal = half_freq + shifted_signal1 + shifted_signal2;% + shifted_signal3 + shifted_signal4;
    
    %flip it over, ifft
    ultimate_signal = [final_signal; flipud(final_signal)];
