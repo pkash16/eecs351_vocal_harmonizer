@@ -8,7 +8,7 @@ function [ultimate_signal] = peakshift(windowed_signal, window_size, fs)
     %Constant Parameters
     findpeaks_threshold = 0.2;%0.2;
     numharms = 6;
-    mask_width = 5;
+    mask_width = 20; %5;
     
     %Freq note shifts
     harmonic_third = 1.25; %Corresponds to a third
@@ -24,9 +24,9 @@ function [ultimate_signal] = peakshift(windowed_signal, window_size, fs)
    %fft of that window
     freq_signal = (fft(windowed_signal));
    
-    half_freq = freq_signal(1:window_size/2);
+    half_freq = freq_signal(1:floor(window_size/2));
    
-    freq_axis = (1:(window_size)/2)*fs/window_size;
+    %freq_axis = (1:(window_size)/2)*fs/window_size;
     
     %{
     figure()
@@ -34,23 +34,36 @@ function [ultimate_signal] = peakshift(windowed_signal, window_size, fs)
     title("Positive side of FFT of window in Hz" + num2str(window))
     %}
     
+   
    %find peaks, shift
-   [peak_val, peak_loc] = findpeaks(abs(half_freq), 'Threshold', findpeaks_threshold, 'SortStr', 'descend');
-   
-   num_peaks_considered = min(numharms, size(peak_loc));
-   
-   
-   peaks_considered = peak_loc(1:num_peaks_considered);
-   
-   mask_window = zeros(window_size/2, 1);
-   
-   for peak = 1:num_peaks_considered
-      mask_window(max(floor(peaks_considered(peak)-(mask_width/2)), 1):min(floor(peaks_considered(peak)+(mask_width/2)),floor(window_size/2))) = 1; 
+   peak_loc=[];
+   if(length(half_freq) > 3)
+    [peak_val, peak_loc] = findpeaks(abs(half_freq), 'Threshold', findpeaks_threshold, 'SortStr', 'descend');
    end
    
-   cleaned_up = half_freq .* mask_window;
+   num_peaks_considered = min(numharms, size(peak_loc, 1));
    
-   
+   if(num_peaks_considered == 0)
+       final_signal = half_freq;
+   else
+       %peak_loc
+       %num_peaks_considered
+       peaks_considered = peak_loc(1:num_peaks_considered, 1);
+       mask_window = zeros(floor(window_size/2), 1);
+
+       for peak = 1:num_peaks_considered
+          mask_window(max(floor(peaks_considered(peak)-(mask_width/2)), 1):min(floor(peaks_considered(peak)+(mask_width/2)),floor(window_size/2))) = 1; 
+       end
+       
+       cleaned_up = half_freq .* mask_window;
+       shifted_signal1 = shift_signal(cleaned_up, minor_third, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
+       shifted_signal2 = shift_signal(cleaned_up, harmonic_fifth, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
+       %shifted_signal3 = shift_signal(cleaned_up, harmonic_seventh, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
+       %shifted_signal4 = shift_signal(cleaned_up, harmonic_second, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
+       
+       final_signal = half_freq + shifted_signal1 + shifted_signal2;% + shifted_signal3 + shifted_signal4;
+   end
+
    %{
    figure();
    plot(freq_axis, abs(cleaned_up))
@@ -58,8 +71,7 @@ function [ultimate_signal] = peakshift(windowed_signal, window_size, fs)
    %}
    
    
-   shifted_signal1 = shift_signal(cleaned_up, harmonic_fifth, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
-   shifted_signal2 = shift_signal(cleaned_up, harmonic_third, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
+   
    %shifted_signal3 = shift_signal(cleaned_up, harmonic_second, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
    %shifted_signal4 = shift_signal(cleaned_up, harmonic_seventh, window_size, peaks_considered, num_peaks_considered, mask_width, fs);
    %{
@@ -92,7 +104,7 @@ function [ultimate_signal] = peakshift(windowed_signal, window_size, fs)
    final_signal = final_signal + half_freq + shifted_signal2;
     %}
 
-   final_signal = half_freq + shifted_signal1 + shifted_signal2;% + shifted_signal3 + shifted_signal4;
+   
    
    %flip it over, ifft
    ultimate_signal = [final_signal; flipud(final_signal)];

@@ -1,7 +1,8 @@
 close all
 
-[y,fs] = audioread("basic.aif");
+[y,fs] = audioread("violins.wav");
 
+y = y(:,1);
 
 t = 0:1/fs:4;
 sin_wave = (sin(2*pi*400*t))' * 0.2;% + ((sin(2*pi*400*1.25*t))' * 0.2);
@@ -19,7 +20,7 @@ figure()
 plot(freq_axis, abs(fftshift(fft(y))))
 title("before processing")
 
-window_size = 10000;
+window_size = 6000;
 
 num_windows = floor(N / window_size);
 
@@ -42,6 +43,9 @@ for window = 1:num_windows-1
    %ultimate2 = fft(windowed_signal2);
    
    %ifft
+   %time_domain = real(ifft(ultimate1));%, 'symmetric');
+   %time_domain2 = real(ifft(ultimate2));%, 'symmetric');
+   
    time_domain = ifft(ultimate1, 'symmetric');
    time_domain2 = ifft(ultimate2, 'symmetric');
    

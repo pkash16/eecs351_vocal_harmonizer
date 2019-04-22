@@ -33,10 +33,13 @@ process = @(x) x.*0.5;
 
 disp('Begin Signal Input...')
 
-prevSignal = []
-prevProcessedSignal = []
 
 counter = 0;
+
+mySignal = zeros(WINDOW_SIZE, 1);
+myProcessedSignal = zeros(WINDOW_SIZE + WINDOW_SIZE/2, 1);
+prevSignal = zeros(WINDOW_SIZE, 1);
+prevProcessedSignal = zeros(WINDOW_SIZE + WINDOW_SIZE/2, 1);
 
 tic
 while toc<100
