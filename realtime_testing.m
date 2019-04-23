@@ -4,12 +4,11 @@
 % audio signals using the System objects audioDeviceReader and
 % audioDeviceWriter.
 %
-% This example shows how to acquire an audio signal using your microphone,
-% perform basic signal processing, and play back your processed
-% signal.
-%
+% This example shows how to use our vocal harmonizer functions in real time
+% to output harmonies
 
-WINDOW_SIZE = 8000;
+%constants, the larger the window size, the more the delay
+WINDOW_SIZE = 6000;
 SAMPLE_RATE = 44100;
 
 %% Create input and output objects
@@ -18,24 +17,13 @@ deviceReader.SampleRate = SAMPLE_RATE;
 deviceReader.SamplesPerFrame = WINDOW_SIZE;
 deviceWriter = audioDeviceWriter('SampleRate',deviceReader.SampleRate);
 
-%% Specify an audio processing algorithm
-% For simplicity, only add gain.
-process = @(x) x.*0.5;
-
-%% Code for stream processing
-% Place the following steps in a while loop for continuous stream
-% processing:
-%   1. Call your audio device reader with no arguments to
-%   acquire one input frame. 
-%   2. Perform your signal processing operation on the input frame.
-%   3. Call your audio device writer with the processed
-%   frame as an argument.
-
 disp('Begin Signal Input...')
 
-
+%simple counter to hold state if we have had previous state or not
 counter = 0;
 
+%initialize variables to hold current and previous signal. We need the
+%previous signal to do the overlapping windows!
 mySignal = zeros(WINDOW_SIZE, 1);
 myProcessedSignal = zeros(WINDOW_SIZE + WINDOW_SIZE/2, 1);
 prevSignal = zeros(WINDOW_SIZE, 1);
@@ -44,11 +32,15 @@ prevProcessedSignal = zeros(WINDOW_SIZE + WINDOW_SIZE/2, 1);
 tic
 while toc<100
     if counter > 1
+        %populate mySignal with the new buffer
         mySignal = deviceReader();
+        %call the realtime_prototype function that takes in the signals and
+        %outputs the peakshifts
         myProcessedSignal = realtime_prototype([prevSignal(length(prevSignal)/2 + 1:end); mySignal], WINDOW_SIZE, SAMPLE_RATE);
-
-        metaOutput = [prevProcessedSignal(WINDOW_SIZE+1:end); zeros(WINDOW_SIZE, 1)] + myProcessedSignal;
-
+        %take the appropriate output from the end of the previous Signal
+        %and the first part of the new signal, and write to the output
+        %buffer
+        metaOutput = ([prevProcessedSignal(WINDOW_SIZE+1:end); zeros(WINDOW_SIZE, 1)] + myProcessedSignal) * 0.5;
         deviceWriter(metaOutput(1:WINDOW_SIZE));
     end
     prevSignal = mySignal;
