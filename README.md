@@ -1,87 +1,24 @@
-# Project Title
+# EECS 351 Vocal Harmonizer
 
-One Paragraph of project description goes here
+The general idea for this project is to create a live vocal harmonization tool that takes an input audio signal and output vocal harmonies. 
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+In order to see a small example of the project working, you can run initial\_prototype.m to hear harmonies from the "woods.mp3" file (which is located in the input_files) folder if you want to hear the input first.
 
-### Prerequisites
+### Modes of Operation
 
-What things you need to install the software and how to install them
+#### Mode 1
+You can run "initial\_prototype.m" and change the FILENAME variable at the top to give any arbitrary input and hear the output.
 
+#### Mode 2
+If your computer has a microphone and you have headphones plugged in, you can run "realtime_testing.m" to hear the output of harmonies in real time!
+
+#### Mode 3
+If you have a DAW you can drag the vocalHarmonizer.vst file into your DAW's VST folder and use it immediately as an audio effect.
+
+To regenerate the VST file, run the following commands
 ```
-Give examples
+validateAudioPlugin vocalHarmonizer
+generateAudioPlugin vocalHarmonizer
 ```
-
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
