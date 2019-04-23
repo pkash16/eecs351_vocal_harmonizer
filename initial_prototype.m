@@ -1,6 +1,8 @@
 close all
 
-[y,fs] = audioread("input_files/woods.mp3");
+FILENAME = "input_files/woods.mp3";
+
+[y,fs] = audioread(FILENAME);
 
 %for removing stereo inputs, we only consider one channel for now!
 y = y(:,1);
@@ -8,11 +10,6 @@ y = y(:,1);
 t = 0:1/fs:4;
 N = length(y);
 freq_axis = (-((N-1)/2):1:(N-1)/2)*fs/N;
-
-%we plot the FFT of the entire signal before processing to see what it look like
-figure()
-plot(freq_axis, abs(fftshift(fft(y))))
-title("before processing")
 
 %window size, the smaller the better it is in realtime
 window_size = 8000;
@@ -72,6 +69,7 @@ xlabel("Time")
 figure();
 plot(abs(fftshift(fft(final_time))));
 xlabel("Frequency");
+title("Final frequency domain signal");
 
 sound(final_time, fs)
 
